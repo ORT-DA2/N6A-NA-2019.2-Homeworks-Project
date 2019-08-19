@@ -9,7 +9,7 @@
 ## Commandos
 Commando | Resultado
 ------------ | -------------
-dotnet new sln| Creamos solucion (solo útil para VisualStudio, cuando queremos abrir la solución y levantar los proyectos asociados)
+dotnet new sln| Creamos solucion (Es necesario para abrirlo en Visual Studio y para poder visualizar los errores en VS Code)
 dotnet new webapi -n "Nombre del Proyecto"| Crear un nuevo Proyecto del template WebApi
 dotnet new mstest -n "Nombre del Proyecto"| Crear un nuevo Proyecto del template Prueba Unitaria
 dotnet new console -n "Nombre del Proyecto"| Crear un nuevo Proyecto del template Console
@@ -20,7 +20,7 @@ dotnet add package "Nombre del Package" | Instala la Package al proyecto actual
 
 ## Commandos para creación de proyeto HomeworkWebApi
 
-### Creamos el sln para poder abrirlo en vs2017 (opcional)
+### Creamos el sln
 
 ```
 dotnet new sln
