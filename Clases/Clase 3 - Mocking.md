@@ -47,6 +47,7 @@ Para comenzar a utilizar Moq, comenzaremos probando nuestro paquete de BusinessL
 
 ```PowerShell
 dotnet new mstest -n Homeworks.BusinessLogic.Tests
+dotnet sln add Homeworks.BusinessLogic.Tests
 cd Homeworks.BusinessLogic.Tests
 dotnet add package Moq
 ```
