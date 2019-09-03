@@ -10,6 +10,11 @@
 * [Clase 3 - Mocking](/Clases/Clase%203%20-%20Mocking.md)
 * [Clase 4 - WebApi](/Clases/Clase%204%20-%20WebApi.md)
 
+## Links de Interés
+
+* [EF Core - Lazy Loading](https://www.learnentityframeworkcore.com/lazy-loading)
+* [EF Core - Relaciones: Many To Many](https://www.learnentityframeworkcore.com/configuration/many-to-many-relationship-configuration)
+
 ## Excel GitHub
 
 * [Cuentas GitHub](https://1drv.ms/x/s!AsRv3us8uF1Rg5VSd6di21LRH9sRuA)
