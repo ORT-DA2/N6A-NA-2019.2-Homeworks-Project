@@ -9,6 +9,8 @@
 * [Clase 3 - Inyección de Dependencias](/Clases/Clase%203%20-%20Inyeccion%20de%20Dependencias.md)
 * [Clase 3 - Mocking](/Clases/Clase%203%20-%20Mocking.md)
 * [Clase 4 - WebApi](/Clases/Clase%204%20-%20WebApi.md)
+* [Clase 4 - Postman](/Clases/Clase%204%20-%20Postman.pdf) / [Colección de Ejemplo](/Codigo/Postman)
+* [Clase 5 - Filters](/Clases/Clase%205%20-%20Filters.md)
 
 ## Links de Interés
 
