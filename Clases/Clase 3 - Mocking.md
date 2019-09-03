@@ -113,8 +113,9 @@ Probando el caso particular el cual se recibe un usuario nulo:
 [ExpectedException(typeof(ArgumentException))]
 public void CreateNullUserTest()
 {
-    var mock = new Mock<IRepository<User>>(MockBehavior.Strict);
-    var userLogic = new UserLogic(mock.Object);
+    //var mock = new Mock<IRepository<User>>(MockBehavior.Strict);
+    //var userLogic = new UserLogic(mock.Object);
+    var userLogic = new UserLogic(null);
 
     var result = userLogic.Create(null);
 }
