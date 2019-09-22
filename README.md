@@ -10,6 +10,7 @@
 * [Clase 3 - Mocking](/Clases/Clase%203%20-%20Mocking.md)
 * [Clase 4 - WebApi](/Clases/Clase%204%20-%20WebApi.md)
 * [Clase 5 - Filters](/Clases/Clase%205%20-%20Filters.md)
+* [Clase 6 - Postman](/Clases/Clase%206%20-%20Postman.pdf) / [Colección de Ejemplo](/Codigo/Postman)
 
 ## Links de Interés
 
