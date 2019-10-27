@@ -9,7 +9,7 @@ import { HomeworksFilterPipe } from './homeworks-list/homeworks-filter.pipe';
 import { HomeworksService } from './services/homeworks.service';
 import { StarComponent } from './star/star.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { HomeworkDetailComponent } from './homework-detail/homework-detail.component';
 import { HomeworkDetailGuard } from './guards/homework-detail.guard';
 
@@ -23,7 +23,7 @@ import { HomeworkDetailGuard } from './guards/homework-detail.guard';
     HomeworkDetailComponent
   ],
   imports: [
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     BrowserModule,
     RouterModule.forRoot([

@@ -41,7 +41,7 @@ Tanto Observables como Promises sirven para lo mismo, pero los Observables permi
 
 ### Tutorial: Consumiendo nuestra API
 
-Como ya hemos vistos, los servicios de Angular son una excelente forma de encapsular lógica como la obtención de datos de un web service / backend, para que cualquier otro componente o service que lo precise lo use, a través de inyección de dependencias. En la clase anterior hicimos eso, pero manteniendo una lista hardcodeada de tareas. En su lugar, queremos enviar una solicitud HTTP para obtener las tareas. 
+Como ya hemos vistos, los servicios de Angular son una excelente forma de encapsular lógica como la obtención de datos de un web service / backend, para que cualquier otro componente o service que lo precise lo use, a través de inyección de dependencias. En la clase anterior hicimos eso, pero manteniendo una lista hardcodeada de tareas. En su lugar, queremos enviar una solicitud HTTP para obtener las tareas.
 
 Así tenemos ahora las tareas:
 
@@ -49,15 +49,15 @@ Así tenemos ahora las tareas:
 
 Angular provee un Servicio HTTP que nos permite llevar a cabo esto; donde luego de comunicarnos con el backend, cada vez que este nos responda, la respuesta llegará a nuestro servicio (HomeworksService), en forma de Observable.
 
-#### 1. Registramos el HttpModule en el AppModule
+#### 1. Registramos el HttpClientModule en el AppModule
 
 - En ```app.module.ts```, importamos el módulo que precisamos para hacer solicitudes Http.
 
 ```typescript
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 ```
 
-A su vez necesitamos registrar el provider de ese service, en el Angular Injector. Como en muchos casos, esto ya viene hecho, gracias a que particularmente el módulo **HttpModule** lleva eso a cabo. Por ende, debemos agregarlo al array de imports de nuestro ```AppModule```.
+A su vez necesitamos registrar el provider de ese service, en el Angular Injector. Como en muchos casos, esto ya viene hecho, gracias a que particularmente el módulo **HttpClientModule** lleva eso a cabo. Por ende, debemos agregarlo al array de imports de nuestro ```AppModule```.
 
 ```typescript
 @NgModule({
@@ -65,25 +65,25 @@ A su vez necesitamos registrar el provider de ese service, en el Angular Injecto
   [ 
     BrowserModule, 
     FormsModule, 
-    HttpModule, …
+    HttpClientModule, …
 ```
 
 Recordemos que el array declarations es para declarar componentes, directivas y pipes que pertenecen a nuestro módulo. Mientras que el array imports es para obtener módulos de afuera.
 
 #### 2. Armemos el cuerpo de nuestra llamada
 
-Hagamos que ```getHomeworks``` devuelva una respuesta de tipo ```Observable<Response>```. Siendo Response una clase que contiene información de la respuesta HTTP.
+Hagamos que ```getHomeworks``` devuelva una respuesta de tipo ```Observable<Array<Homework>>```.
 
 Para ello, en ```homeworks.service.ts```, importamos la librería que nos permite trabajar con Observables (Reactive Extensions).
 
 ```typescript
-import { Observable, throwError } from ‘rxjs/Observable’; 
+import { Observable, throwError } from ‘rxjs/Observable’;
 ```
 
 Es importante notar que las llamadas HTTP son operaciones asincrónicas únicas, por lo que la secuencia Observable contiene sólo un elemento  del tipo Response. También precisamos hacer:
 
 ```typescript
-import { Http, Response } from ‘@angular/http’;
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 ```
 
 Y ahora veamos esto, ¿realmente queremos "observar" Response enteras HTTP? A nosotros simplemente nos interesa obtener tareas, no Responses. No queremos "observar" objetos del tipo Response.
@@ -91,16 +91,10 @@ Y ahora veamos esto, ¿realmente queremos "observar" Response enteras HTTP? A no
 Para cargar el operador map, tenemos que cargarlo usando import:
 
 ```typescript
-import { map, tap, catchError } from 'rxjs/operators';
+import { tap, catchError } from 'rxjs/operators';
 ```
 
-Esta es una forma bastante inusual de cargar cosas: le dice al Module Loader que cargue una librería, sin particularmente importar nada. Cuando la librería se carga, su código JS se carga, cargándose para esta librería en particular, la función map para que quede disponible.
-
-Para que esto funcione, en la consola deberíamos haber hecho:
-
-```bash
-npm install rxjs --save 
-```
+Esta es una forma bastante inusual de cargar cosas: le dice al Module Loader que cargue una librería, sin particularmente importar nada. Cuando la librería se carga, su código JS se carga.
 
 Finalmente:
 
@@ -113,84 +107,71 @@ La clase queda algo así:
 
 ```typescript
 import { Injectable } from "@angular/core";
-import { Http, Response, RequestOptions, Headers } from "@angular/http";
-import { Observable, throwError } from "rxjs"; 
-import { map, tap, catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { tap, catchError } from 'rxjs/operators';
 import { Homework } from '../models/Homework';
 
 @Injectable()
 export class HomeworksService {
 
-  private WEB_API_URL : string = 'http://localhost:4015/api/homeworks';
+  private WEB_API_URL : string = 'http://localhost:5000/api/homeworks';
 
-  constructor(private _httpService: Http) {  }
+  constructor(private _httpService: HttpClient) {  }
   
   getHomeworks():Observable<Array<Homework>> {
-    const myHeaders = new Headers();
-    myHeaders.append('Accept', 'application/json');    
-    const requestOptions = new RequestOptions({headers: myHeaders});
-          
-    return this._httpService.get(this.WEB_API_URL, requestOptions);
+    const myHeaders = new HttpHeaders();
+    myHeaders.append('Accept', 'application/json');
+    const httpOptions = {
+        headers: myHeaders
+    };
+
+    return this._httpService.get<Array<Homework>>(this.WEB_API_URL, httpOptions)
   }
 }
 ```
-Sin embargo, como ya mencionamos antes, debemos usar la función ```map```. Nuestros componentes, como el ```HomeworksListComponent```, esperan recibir una lista de tareas, no de respuestas Http ```(Response)```. En consecuencia precisamos “traducir” cada response en un array de tareas. Eso lo hacemos con el operador ```map```. Dicho operador lo que nos va a permitir es tomar la Response Http y convertirla en un array de tareas. El argumento que recibe dicha función es una Arrow Function, como ya hemos visto, que son simplemente lambda expressions, que transforma la respuesta en un JSON. 
 
-Quedando algo así:
-
-```typescript
-getHomeworks():Observable<Array<Homework>> {
-  const myHeaders = new Headers();
-  myHeaders.append('Accept', 'application/json');    
-  const requestOptions = new RequestOptions({headers: myHeaders});
-
-  return this._httpService.get(this.WEB_API_URL, requestOptions)
-      .pipe(
-          map((response : Response) => <Array<Homework>> response.json()),
-      );
-}
-```
-
-Ahora simplemente agregamos otro operador, para manejar errores. Esto es importante ya que muchísimas cosas pueden darse al querer comunicarse con un servicio de backend, desde una conexión perdida, una request inválida, etc. En consecuencia, agreguemos manejo de excepciones. 
+Ahora agregaremos una manera de manejar errores. Esto es importante ya que muchísimas cosas pueden darse al querer comunicarse con un servicio de backend, desde una conexión perdida, una request inválida, etc. En consecuencia, agreguemos manejo de excepciones.
 
 Nos queda algo así:
 
 ```typescript
 import { Injectable } from "@angular/core";
-import { Http, Response, RequestOptions, Headers } from "@angular/http";
-import { Observable, throwError } from "rxjs"; 
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
 import { map, tap, catchError } from 'rxjs/operators';
 import { Homework } from '../models/Homework';
 
 @Injectable()
 export class HomeworksService {
 
-  private WEB_API_URL : string = 'http://localhost:4015/api/homeworks';
+  private WEB_API_URL : string = 'http://localhost:5000/api/homeworks';
 
-  constructor(private _httpService: Http) {  }
+  constructor(private _httpService: HttpClient) {  }
   
   getHomeworks():Observable<Array<Homework>> {
-    const myHeaders = new Headers();
-    myHeaders.append('Accept', 'application/json');    
-    const requestOptions = new RequestOptions({headers: myHeaders});
-          
-    return this._httpService.get(this.WEB_API_URL, requestOptions)
+    const myHeaders = new HttpHeaders();
+    myHeaders.append('Accept', 'application/json');
+    const httpOptions = {
+        headers: myHeaders
+    };
+
+    return this._httpService.get<Array<Homework>>(this.WEB_API_URL, httpOptions)
         .pipe(
-            map((response : Response) => <Array<Homework>> response.json()),
+            //map((response : Response) => <Array<Homework>> response.json()),
             tap(data => console.log('Los datos que obtuvimos fueron: ' + JSON.stringify(data))),
             catchError(this.handleError)
         );
   }
 
-  private handleError(error: Response) {
+  private handleError(error: any) {
     console.error(error);
-    return throwError(error.json().error|| 'Server error');
+    return throwError(error.error || error.message);
   }
 }
-
 ```
 
-Es interesante ver como también el servicio ```Http``` nos permite realizar llamadas usando cualquier verbo Http:
+Es interesante ver como también el servicio ```HttpClient``` nos permite realizar llamadas usando cualquier verbo Http:
 
 ![imagen](../imgs/angular-clase4/verinteresantes.PNG)
 
@@ -214,7 +195,8 @@ private result(data: Array<Homework>):void {
   this.homeworks = data;
   console.log(this.homeworks);
 }
-```    
+```
+
 ## Conceptos avanzados de Routing
 
 La otra clase habíamos visto los aspectos básicos de Routing. Ahora veremos algunas técnicas adicionales para manipular las rutas.
@@ -228,6 +210,7 @@ Pasar parámetros para las rutas. Veamos el ejemplo si quisiéramos ver el detal
 #### 0. Creamos un HomeworkDetailComponent:
 
 ```homework-detail.component.html```:
+
 ```html
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -237,6 +220,7 @@ Pasar parámetros para las rutas. Veamos el ejemplo si quisiéramos ver el detal
 ```
 
 ```homework-detail.component.ts```:
+
 ```typescript
 import { Component, OnInit } from '@angular/core';
 import { Homework } from '../models/Homework';
@@ -304,11 +288,11 @@ constructor(private _currentRoute: ActivatedRoute) {  }
 
 ```typescript
 ngOnInit() : void {
-	// let (es parte de ES2015) y define una variable que vive en este scope
-	// usamos el nombre del parámetro que uamos en la configuración de la ruta y lo obtenemos
-	let id =+ this._currentRoute.snapshot.params['id'];
-	// definimos el string con interpolacion 
-	this.pageTitle +=  `: ${id}`;
+// let (es parte de ES2015) y define una variable que vive en este scope
+// usamos el nombre del parámetro que uamos en la configuración de la ruta y lo obtenemos
+let id =+ this._currentRoute.snapshot.params['id'];
+// definimos el string con interpolacion
+this.pageTitle +=  `: ${id}`;
 }
 ```
 
@@ -404,6 +388,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HomeworksListComponent } from './homeworks-list/homeworks-list.component';
@@ -411,7 +396,6 @@ import { HomeworksFilterPipe } from './homeworks-list/homeworks-filter.pipe';
 import { HomeworksService } from './services/homeworks.service';
 import { StarComponent } from './star/star.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { HttpModule } from '@angular/http';
 import { HomeworkDetailComponent } from './homework-detail/homework-detail.component';
 import { HomeworkDetailGuard } from './homework-detail.guard';
 
@@ -425,7 +409,7 @@ import { HomeworkDetailGuard } from './homework-detail.guard';
     HomeworkDetailComponent
   ],
   imports: [
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     BrowserModule,
     RouterModule.forRoot([
