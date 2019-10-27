@@ -36,12 +36,13 @@
                           {{showExercises ? 'Mostrar' : 'Ocultar'}} EJs
                         </button>
                       </th>
+                      <th>Rating</th>
                     </tr>
                   </thead>
                 <!--Cuerpo de la tabla-->
                 <tbody>
                     <tr *ngFor="let aHomework of homeworks | homeworksFilter : listFilter">
-                        <td>{{aHomework.id}}</td>
+                      <td><a [routerLink]="['/homeworks', aHomework.id]"> {{aHomework.id | uppercase}} </a></td>
                         <td>{{aHomework.description  | uppercase}}</td>
                         <td>{{aHomework.dueDate}}</td>
                         <td>{{aHomework.score}}</td>
@@ -62,6 +63,12 @@
                               </tbody>
                             </table>
                           </div>
+                        </td>
+                        <td>
+                          <app-star 
+                            [rating]='aHomework.rating'
+                            (ratingClicked)='onRatingClicked($event)'>
+                          </app-star>
                         </td>
                     </tr>
                   </tbody>
