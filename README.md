@@ -22,6 +22,7 @@
 * [Clase 10 - Custom Pipes y Service Básico](/Clases/Clase%2010%20-%20Custom%20Pipes%20y%20Service%20Basico.md)
 * [Clase 11 - Conceptos avanzados](/Clases/Clase%2011%20-%20Conceptos%20avanzados.md)
 * [Clase 11 - Http, Observables y Mas sobre Routing](/Clases/Clase%2011%20-%20Http%20y%20Observables%20y%20Mas%20sobre%20Routing.md)
+* [Clase 12 - Deployment de Angular en IIS](/Clases/Clase%2012%20-%20Deployment%20de%20Angular%20en%20IIS)
 
 ## Extra
 
@@ -35,10 +36,11 @@
 ## Guiás Deployment - AULAS
 
 * [Guiá Deployment para Obl 1 - Aulas](/Clases/Guias/Guia%20de%20despliegue%20en%20IIS%20-%20OB1.pdf)
+* [Guiá Deployment para Obl 2 - Aulas](/Clases/Guias/Guia%20de%20despliegue%20en%20IIS%20-%20OB2.pdf)
 
 ## Excel GitHub
 
-* [Cuentas GitHub](https://1drv.ms/x/s!AsRv3us8uF1Rg5VSd6di21LRH9sRuA)
+* Cuentas GitHub
 
 ## Aclaración
 
